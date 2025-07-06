@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Word Search in Grid</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    textarea, input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Word Search in Grid</h1>
+
+  <label>Enter Board (rows separated by new lines, characters separated by spaces):</label>
+  <textarea id="gridInput" rows="6">A B C E
+S F C S
+A D E E</textarea>
+
+  <label>Enter Word to Search:</label>
+  <input type="text" id="wordInput" value="ABCCED" />
+
+  <button onclick="runSearch()">Search Word</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function runSearch() {
+      const gridInput = document.getElementById("gridInput").value.trim();
+      const word = document.getElementById("wordInput").value.trim();
+      const resultDiv = document.getElementById("result");
+
+    
+      const board = gridInput.split("\n").map(row => row.trim().split(/\s+/));
+      const m = board.length;
+      const n = board[0].length;
+
+      const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+      function find(i, j, index) {
+        if (index === word.length) return true;
+        if (i < 0 || j < 0 || i >= m || j >= n || board[i][j] === '#' || board[i][j] !== word[index]) {
+          return false;
+        }
+
+        const temp = board[i][j];
+        board[i][j] = '#';  
+
+        for (const [di, dj] of directions) {
+          if (find(i + di, j + dj, index + 1)) {
+            return true;
+          }
+        }
+
+        board[i][j] = temp;  
+        return false;
+      }
+
+      let found = false;
+      for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+          if (board[i][j] === word[0] && find(i, j, 0)) {
+            found = true;
+            break;
+          }
+        }
+        if (found) break;
+      }
+
+      resultDiv.innerText = found
+        ? `✅ The word "${word}" **exists** in the grid.`
+        : `❌ The word "${word}" **does NOT exist** in the grid.`;
+    }
+  </script>
+
+</body>
+</html>
